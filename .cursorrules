@@ -1,0 +1,78 @@
+# Design News & Notes Web App
+
+## Tech Stack
+- Next.js 14+ with App Router and TypeScript
+- Tailwind CSS for styling
+- shadcn/ui for component library
+- React Query for data fetching
+- Markdown support for note editor
+
+## Code Style
+- Use functional components with hooks
+- Prefer server components when possible
+- Extract reusable logic into custom hooks
+- Keep components under 200 lines
+- Use TypeScript interfaces for all props
+- Avoid inline styles, use Tailwind classes
+
+## Component Structure
+- One component per file
+- Export components as named exports
+- Place interfaces above component definition
+- Use destructured props with TypeScript types
+
+## Naming Conventions
+- Components: PascalCase (NewsCard, CategoryNav)
+- Files: kebab-case (news-card.tsx, category-nav.tsx)
+- Hooks: camelCase with 'use' prefix (useNewsFilter)
+- Types: PascalCase with descriptive names
+
+## Import Order
+1. React and Next.js imports
+2. Third-party libraries
+3. Internal utilities and hooks
+4. Component imports
+5. Type imports
+6. Style imports
+
+## Data Fetching
+- Use Server Components for initial data
+- React Query for client-side data management
+- Implement proper loading and error states
+- Cache appropriately based on data volatility
+
+## Styling Guidelines
+- Use Tailwind utility classes
+- Follow shadcn/ui component patterns
+- Maintain consistent spacing scale
+- Implement responsive design mobile-first
+- Support dark mode using CSS variables
+
+## Performance
+- Lazy load below-fold content
+- Optimize images with next/image
+- Implement code splitting
+- Use React.memo for expensive components
+- Debounce search and filter inputs
+
+## Accessibility
+- Use semantic HTML elements
+- Include ARIA labels where needed
+- Ensure keyboard navigation works
+- Maintain focus management
+- Test with screen readers
+
+## Error Handling
+- Always catch async errors
+- Provide user-friendly error messages
+- Log errors for debugging
+- Implement retry mechanisms
+- Graceful degradation
+
+## Security
+- Sanitize user input
+- Validate data on client and server
+- Use environment variables for sensitive data
+- Implement proper CORS policies
+- Escape rendered HTML content
+

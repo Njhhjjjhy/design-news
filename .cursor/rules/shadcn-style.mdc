@@ -1,0 +1,375 @@
+# shadcn/ui Style Enforcement Rules
+
+This file enforces EXACT shadcn/ui component patterns and conventions as specified in the official documentation: https://ui.shadcn.com/docs/components and https://ui.shadcn.com/docs/installation.
+
+## ✅ ACCEPTABLE PATTERNS (YES)
+
+### Import Pattern
+```typescript
+// ✅ CORRECT - Absolute imports from @ alias
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+```
+
+### Usage Pattern
+```typescript
+// ✅ CORRECT - Use exact shadcn props (variant, size, etc.)
+<Button variant="outline" size="sm">Click</Button>
+
+// ✅ CORRECT - Compound components
+<Card>
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+  </CardHeader>
+  <CardContent>Content</CardContent>
+</Card>
+```
+
+### Path Requirements
+- ✅ MUST use: `"@/components/ui/*"` via components.json aliases
+- ✅ All imports MUST use absolute paths with `@/` alias
+
+### Styling Requirements
+- ✅ MUST use `cn()` utility function for className merging
+- ✅ MUST use Tailwind classes only
+- ✅ MUST follow exact shadcn/ui prop patterns (variant, size, etc.)
+
+### Accessibility Requirements
+- ✅ MUST use Radix UI primitives underneath (Dialog → DialogTrigger/DialogContent)
+- ✅ MUST include proper ARIA attributes
+- ✅ MUST maintain keyboard navigation support
+
+## ❌ PROHIBITED PATTERNS (NO)
+
+### Import Patterns
+```typescript
+// ❌ WRONG - Relative imports
+import { Button } from "../ui/button"
+import { Button } from "./components/ui/button"
+
+// ❌ WRONG - Wrong alias
+import { Button } from "~/components/ui/button"
+```
+
+### Component Creation
+- ❌ NO custom components from scratch (use shadcn/ui components)
+- ❌ NO installing other UI libraries (npm install UI libs)
+- ❌ NO creating wrapper components that duplicate shadcn functionality
+
+### Styling
+- ❌ NO inline styles: `style={{ color: 'red' }}`
+- ❌ NO CSS modules: `import styles from './component.module.css'`
+- ❌ NO styled-components or emotion
+- ❌ NO hardcoded colors (use CSS variables)
+
+### Props and Accessibility
+- ❌ NO missing Radix/aria props
+- ❌ NO skipping accessibility features
+- ❌ NO custom variants that don't match shadcn patterns
+
+## Component Structure
+
+### File Organization
+- All shadcn/ui components MUST be placed in `components/ui/` directory
+- Component files MUST use kebab-case naming: `component-name.tsx`
+- Each component MUST be in its own file
+- Export components as named exports, NOT default exports
+
+### Import Conventions
+```typescript
+// CORRECT - Use absolute imports with @ alias
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
+// WRONG - Relative imports
+import { Button } from "../ui/button"
+```
+
+### Component Definition Pattern
+```typescript
+// CORRECT shadcn/ui pattern
+import * as React from "react"
+import { cn } from "@/lib/utils"
+
+function ComponentName({ 
+  className, 
+  ...props 
+}: React.ComponentProps<"element">) {
+  return (
+    <element
+      data-slot="component-name"
+      className={cn("base-classes", className)}
+      {...props}
+    />
+  )
+}
+
+export { ComponentName }
+```
+
+## Styling with CVA (Class Variance Authority)
+
+### Variant Definitions
+- MUST use `cva` from `class-variance-authority` for variant-based styling
+- Variants MUST be defined using the exact shadcn/ui pattern:
+```typescript
+import { cva, type VariantProps } from "class-variance-authority"
+
+const componentVariants = cva(
+  "base-classes-here", // Base classes always first
+  {
+    variants: {
+      variant: {
+        default: "classes",
+        secondary: "classes",
+        // ... other variants
+      },
+      size: {
+        default: "classes",
+        sm: "classes",
+        lg: "classes",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+### Variant Props
+- Component MUST accept `VariantProps<typeof componentVariants>`
+- MUST use destructured props with default values
+- MUST spread remaining props: `{...props}`
+
+```typescript
+function Component({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: React.ComponentProps<"element"> & 
+   VariantProps<typeof componentVariants>) {
+  // ...
+}
+```
+
+## Utility Function: `cn()`
+
+### Usage Requirements
+- ALWAYS use `cn()` utility from `@/lib/utils` for className merging
+- MUST use `cn()` for combining base classes with className prop
+- Pattern: `cn(baseClasses, className)`
+
+```typescript
+// CORRECT
+className={cn("base-classes", className)}
+
+// WRONG - Direct template literals
+className={`base-classes ${className}`}
+```
+
+## Data Attributes and Slots
+
+### Data Slot Pattern
+- Components MUST include `data-slot` attribute with component name
+- Use kebab-case for slot names: `data-slot="component-name"`
+- Sub-components MUST have descriptive slot names: `data-slot="component-subpart"`
+
+```typescript
+<div data-slot="card" {...props} />
+<div data-slot="card-header" {...props} />
+<div data-slot="card-content" {...props} />
+```
+
+### Variant Data Attributes
+- For variant-based components, include variant and size in data attributes:
+```typescript
+<Comp
+  data-slot="button"
+  data-variant={variant}
+  data-size={size}
+  className={cn(componentVariants({ variant, size, className }))}
+  {...props}
+/>
+```
+
+## TypeScript Patterns
+
+### Component Props
+- MUST use `React.ComponentProps<"element">` for base element props
+- MUST extend with variant props using intersection types
+- MUST include `className?: string` prop
+- MUST spread props: `{...props}`
+
+```typescript
+// CORRECT pattern
+function Component({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  // ...
+}
+
+// With variants
+function Component({
+  className,
+  variant,
+  size,
+  ...props
+}: React.ComponentProps<"div"> & 
+   VariantProps<typeof componentVariants>) {
+  // ...
+}
+```
+
+### Type Exports
+- Export variant types when using CVA:
+```typescript
+export { Component, componentVariants }
+export type { VariantProps } from "class-variance-authority"
+```
+
+## Radix UI Integration
+
+### Slot Pattern (for Composition)
+- When using `@radix-ui/react-slot` for composition:
+```typescript
+import { Slot } from "@radix-ui/react-slot"
+
+function Component({
+  asChild = false,
+  ...props
+}: ComponentProps & {
+  asChild?: boolean
+}) {
+  const Comp = asChild ? Slot : "element"
+  return <Comp {...props} />
+}
+```
+
+### Radix Primitives
+- Use Radix UI primitives for complex components (Dialog, Dropdown, etc.)
+- Follow exact shadcn/ui wrapper patterns for Radix components
+- Maintain all Radix props and accessibility features
+
+## Tailwind CSS Classes
+
+### Class Ordering
+- Base utility classes first
+- State variants (hover, focus, etc.) after base
+- Responsive variants last
+- Dark mode variants: `dark:class-name`
+
+### Common Patterns
+```typescript
+// Spacing and layout
+"flex items-center justify-center gap-2"
+
+// Typography
+"text-sm font-medium leading-none"
+
+// Borders and radius
+"rounded-md border"
+
+// Colors (use CSS variables)
+"bg-primary text-primary-foreground"
+"bg-background text-foreground"
+"text-muted-foreground"
+
+// States
+"hover:bg-accent hover:text-accent-foreground"
+"focus-visible:outline-none focus-visible:ring-2"
+"disabled:opacity-50 disabled:pointer-events-none"
+```
+
+### CSS Variables Usage
+- MUST use CSS variables from theme, NEVER hardcoded colors
+- Use semantic color tokens: `bg-primary`, `text-foreground`, `border-border`
+- Muted colors: `text-muted-foreground`, `bg-muted`
+
+## Component Composition
+
+### Compound Components
+- Use compound component pattern for complex components
+- Export all sub-components together
+- Each sub-component MUST have its own `data-slot`
+
+```typescript
+function Card({ ... }) { }
+function CardHeader({ ... }) { }
+function CardTitle({ ... }) { }
+function CardContent({ ... }) { }
+
+export { Card, CardHeader, CardTitle, CardContent }
+```
+
+## Accessibility Requirements
+
+### ARIA Attributes
+- Include proper ARIA labels where needed
+- Use semantic HTML elements
+- Maintain keyboard navigation support
+- Include focus management for modals/dialogs
+
+### Focus States
+- MUST include visible focus indicators
+- Pattern: `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`
+
+### Disabled States
+- MUST include disabled styling: `disabled:opacity-50 disabled:pointer-events-none`
+
+## File Structure Example
+
+```
+components/ui/
+  ├── button.tsx
+  ├── card.tsx
+  ├── input.tsx
+  └── ...
+```
+
+Each file MUST:
+1. Import React as `import * as React from "react"`
+2. Import `cn` from `@/lib/utils`
+3. Define component(s) with proper TypeScript types
+4. Export as named export(s)
+5. Include `data-slot` attributes
+6. Use `cn()` for className merging
+
+## Prohibited Patterns
+
+### DO NOT:
+- ❌ Use default exports for components
+- ❌ Use inline styles (use Tailwind classes only) - EXCEPT in official shadcn/ui components
+- ❌ Hardcode colors (use CSS variables)
+- ❌ Skip `data-slot` attributes
+- ❌ Use relative imports for UI components: `"./components/ui"` or `"../ui"`
+- ❌ Mix component logic with business logic
+- ❌ Create components outside `components/ui/` that should be shadcn/ui components
+- ❌ Install other UI libraries (npm install UI libs like Material-UI, Ant Design, etc.)
+- ❌ Create custom components from scratch when shadcn/ui components exist
+- ❌ Use CSS modules or styled-components
+- ❌ Skip Radix/aria props in compound components
+
+## Validation Checklist
+
+Before committing any shadcn/ui component, verify:
+- [ ] Component is in `components/ui/` directory
+- [ ] Uses `cn()` utility for className merging
+- [ ] Includes `data-slot` attribute
+- [ ] Uses CSS variables for colors (no hardcoded colors)
+- [ ] Exports as named export
+- [ ] Uses `React.ComponentProps<"element">` for props
+- [ ] Includes proper TypeScript types
+- [ ] Follows CVA pattern if using variants
+- [ ] Includes accessibility features (ARIA, focus states)
+- [ ] Uses absolute imports with `@/` alias
+- [ ] Matches exact shadcn/ui documentation patterns
+
+## Reference
+
+- Official Documentation: https://ui.shadcn.com/docs/components
+- Installation Guide: https://ui.shadcn.com/docs/installation
+- Component Examples: https://ui.shadcn.com/docs/components
