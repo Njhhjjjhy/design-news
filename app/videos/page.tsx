@@ -24,7 +24,7 @@ function VideosPageContent() {
 
   if (error) {
     return (
-      <div className="w-full px-12 py-12">
+      <div className="w-full px-4 md:px-5 lg:px-12 py-6 md:py-8 lg:py-12 large:py-16">
         <div className="py-20 text-center">
           <p className="text-xl text-muted-foreground">Failed to load videos. Please try again later.</p>
         </div>
@@ -33,9 +33,9 @@ function VideosPageContent() {
   }
 
   return (
-    <div className="w-full px-12 py-12">
+    <div className="w-full px-4 md:px-5 lg:px-12 py-6 md:py-8 lg:py-12 large:py-16">
       {isLoading ? (
-        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 md:grid-cols-3 lg:gap-6 lg:grid-cols-4 large:gap-8 large:grid-cols-5">
           {[...Array(20)].map((_, i) => (
             <div key={i} className="aspect-video animate-pulse rounded-lg bg-muted" role="status" aria-label="Loading videos">
               <span className="sr-only">Loading...</span>
@@ -55,7 +55,7 @@ function VideosPageContent() {
         </div>
       ) : (
         <div
-          className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 md:grid-cols-3 lg:gap-6 lg:grid-cols-4 large:gap-8 large:grid-cols-5"
           role="list"
           aria-label="Design videos"
         >
@@ -95,8 +95,8 @@ function VideosPageContent() {
 export default function VideosPage() {
   return (
     <Suspense fallback={
-      <div className="w-full px-12 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="w-full px-4 md:px-5 lg:px-12 py-6 md:py-8 lg:py-12 large:py-16">
+        <div className="grid gap-4 md:gap-6 lg:gap-8 large:gap-10 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 large:grid-cols-4">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="h-80 animate-pulse rounded-lg bg-muted" role="status" aria-label="Loading videos">
               <span className="sr-only">Loading...</span>

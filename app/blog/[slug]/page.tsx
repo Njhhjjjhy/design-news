@@ -24,7 +24,7 @@ export default function BlogPostPage() {
 
   if (notFound) {
     return (
-      <div className="w-full px-12 py-20">
+      <div className="w-full px-4 md:px-5 lg:px-12 py-10 md:py-14 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="mb-4 text-4xl font-bold">Post Not Found</h1>
           <p className="text-xl text-muted-foreground">
@@ -37,7 +37,7 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div className="w-full px-12 py-20">
+      <div className="w-full px-4 md:px-5 lg:px-12 py-10 md:py-14 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xl text-muted-foreground">Loading...</p>
         </div>

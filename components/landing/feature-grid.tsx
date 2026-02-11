@@ -61,10 +61,10 @@ const features = [
 
 export function FeatureGrid() {
   return (
-    <section className="w-full px-12 py-24">
+    <section className="w-full px-4 md:px-5 lg:px-12 py-8 md:py-16 lg:py-24 large:py-32">
       <div className="mx-auto w-full max-w-none">
-        <h2 className="mb-16 text-center text-5xl font-bold md:text-6xl">Features</h2>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <h2 className="mb-6 md:mb-12 lg:mb-16 text-center text-2xl md:text-4xl lg:text-5xl large:text-6xl font-bold">Features</h2>
+        <div className="grid gap-3 md:gap-6 lg:gap-8 large:gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
@@ -78,16 +78,16 @@ export function FeatureGrid() {
                   <Link href={feature.href} className="block h-full">
                     <Card className="flex flex-col hover:shadow-lg transition-all hover:border-primary/50 cursor-pointer h-full">
                       <CardHeader>
-                        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">
-                          <Icon className="h-8 w-8 text-primary" />
+                        <div className="mb-4 md:mb-6 flex h-12 w-12 md:h-16 md:w-16 items-center justify-center rounded-lg bg-primary/10">
+                          <Icon className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                         </div>
-                        <CardTitle className="text-2xl mb-4">{feature.title}</CardTitle>
-                        <CardDescription className="text-lg leading-relaxed">{feature.description}</CardDescription>
+                        <CardTitle className="text-lg md:text-2xl mb-2 md:mb-4">{feature.title}</CardTitle>
+                        <CardDescription className="text-sm md:text-lg leading-relaxed">{feature.description}</CardDescription>
                       </CardHeader>
                       <CardContent className="mt-auto">
                         <div className="flex flex-wrap gap-3">
                           {feature.badges.map((badge) => (
-                            <Badge key={badge} variant="secondary" className="text-base px-3 py-1">
+                            <Badge key={badge} variant="secondary" className="text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1">
                               {badge}
                             </Badge>
                           ))}

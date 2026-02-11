@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Category } from '@/lib/types';
 import { gsap } from 'gsap';
 
@@ -48,36 +49,39 @@ export function CategoryNavigation({ activeCategory, onCategoryChange }: Categor
     }
   }, []);
 
+  const activeLabel = activeCategory === 'all' ? 'All Categories' : categoryLabels[activeCategory];
+
   return (
-    <div ref={tabsRef}>
-      <Tabs value={activeCategory} onValueChange={(value) => onCategoryChange(value as Category | 'all')}>
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 h-auto" aria-label="Category navigation">
-          <TabsTrigger 
-            value="all" 
-            className="text-base py-3"
-            onMouseEnter={(e) => {
-              gsap.to(e.currentTarget, {
-                scale: 1.05,
-                duration: 0.2,
-                ease: 'power2.out',
-              });
-            }}
-            onMouseLeave={(e) => {
-              gsap.to(e.currentTarget, {
-                scale: 1,
-                duration: 0.2,
-                ease: 'power2.out',
-              });
-            }}
-          >
-            All
-          </TabsTrigger>
-          {categories.map((category) => (
-            <TabsTrigger 
-              key={category} 
-              value={category} 
-              aria-label={`Filter by ${categoryLabels[category]}`} 
-              className="text-base py-3"
+    <>
+      {/* Mobile: Select dropdown */}
+      <div className="md:hidden">
+        <Select
+          value={activeCategory}
+          onValueChange={(value) => onCategoryChange(value as Category | 'all')}
+        >
+          <SelectTrigger className="w-full h-11 text-base" aria-label="Filter by category">
+            <SelectValue placeholder="All Categories">
+              {activeLabel}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {categoryLabels[category]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Desktop: Tabs */}
+      <div ref={tabsRef} className="hidden md:block">
+        <Tabs value={activeCategory} onValueChange={(value) => onCategoryChange(value as Category | 'all')}>
+          <TabsList className="flex w-full gap-1 md:grid md:w-full md:grid-cols-5 lg:grid-cols-9 h-auto" aria-label="Category navigation">
+            <TabsTrigger
+              value="all"
+              className="text-base py-3 shrink-0"
               onMouseEnter={(e) => {
                 gsap.to(e.currentTarget, {
                   scale: 1.05,
@@ -93,11 +97,35 @@ export function CategoryNavigation({ activeCategory, onCategoryChange }: Categor
                 });
               }}
             >
-              {categoryLabels[category]}
+              All
             </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-    </div>
+            {categories.map((category) => (
+              <TabsTrigger
+                key={category}
+                value={category}
+                aria-label={`Filter by ${categoryLabels[category]}`}
+                className="text-base py-3 shrink-0"
+                onMouseEnter={(e) => {
+                  gsap.to(e.currentTarget, {
+                    scale: 1.05,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                  });
+                }}
+                onMouseLeave={(e) => {
+                  gsap.to(e.currentTarget, {
+                    scale: 1,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                  });
+                }}
+              >
+                {categoryLabels[category]}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+    </>
   );
 }

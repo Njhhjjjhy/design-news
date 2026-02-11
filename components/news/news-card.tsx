@@ -93,30 +93,30 @@ export function NewsCard({ item, viewMode = 'grid' }: NewsCardProps) {
         whileHover={{ x: 4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       >
-        <Card 
+        <Card
           className="hover:shadow-xl transition-all duration-300 cursor-pointer group focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
           role="article"
           aria-labelledby={`article-title-${item.id}-list`}
           tabIndex={0}
         >
-        <CardHeader>
-          <div className="mb-4 flex flex-wrap gap-3">
+        <CardHeader className="p-4 md:p-6">
+          <div className="mb-2 md:mb-4 flex flex-wrap gap-1.5 md:gap-3">
             {item.category.map((cat) => (
-              <Badge key={cat} variant="outline" className={`${categoryColors[cat]} text-base px-3 py-1`} aria-label={`Category: ${cat}`}>
+              <Badge key={cat} variant="outline" className={`${categoryColors[cat]} text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1`} aria-label={`Category: ${cat}`}>
                 {cat}
               </Badge>
             ))}
           </div>
-          <CardTitle id={`article-title-${item.id}-list`} className="line-clamp-2 text-2xl mb-2">{item.title}</CardTitle>
-          <CardDescription className="text-lg">
+          <CardTitle id={`article-title-${item.id}-list`} className="line-clamp-2 text-lg md:text-2xl mb-1 md:mb-2">{item.title}</CardTitle>
+          <CardDescription className="text-sm md:text-lg">
             <span className="sr-only">Published by </span>
             {item.source}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="mb-6 text-lg text-muted-foreground line-clamp-3 leading-relaxed">{item.excerpt}</p>
+        <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+          <p className="mb-3 md:mb-6 text-sm md:text-lg text-muted-foreground line-clamp-2 md:line-clamp-3 leading-relaxed">{item.excerpt}</p>
           <div className="flex items-center justify-between">
-            <div className="text-base text-muted-foreground">
+            <div className="text-xs md:text-base text-muted-foreground">
               <time dateTime={item.publishDate.toISOString()}>{format(item.publishDate, 'MMM d, yyyy')}</time>
               {item.author && (
                 <>
@@ -125,14 +125,14 @@ export function NewsCard({ item, viewMode = 'grid' }: NewsCardProps) {
                 </>
               )}
             </div>
-            <Button asChild variant="outline" size="sm" className="text-base group-hover:bg-accent transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-              <a 
-                href={item.url} 
-                target="_blank" 
+            <Button asChild variant="outline" size="sm" className="text-xs md:text-base group-hover:bg-accent transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <a
+                href={item.url}
+                target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Read full article: ${item.title} from ${item.source}. Opens in new tab.`}
               >
-                Read More <ExternalLink className="ml-2 h-5 w-5 inline-block group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                Read More <ExternalLink className="ml-1 md:ml-2 h-4 w-4 md:h-5 md:w-5 inline-block group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </a>
             </Button>
           </div>
@@ -145,41 +145,41 @@ export function NewsCard({ item, viewMode = 'grid' }: NewsCardProps) {
   // Grid view (default)
   return (
     <div ref={cardContainerRef}>
-      <Card 
+      <Card
         ref={cardRef}
-        className="hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer group focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2" 
-        role="article" 
+        className="hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer group focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+        role="article"
         aria-labelledby={`article-title-${item.id}`}
         tabIndex={0}
       >
-      <CardHeader>
-        <div className="mb-4 flex flex-wrap gap-3">
+      <CardHeader className="p-4 md:p-6">
+        <div className="mb-2 md:mb-4 flex flex-wrap gap-1.5 md:gap-3">
           {item.category.map((cat) => (
-            <Badge 
+            <Badge
               key={cat}
-              variant="outline" 
-              className={`${categoryColors[cat]} text-base px-3 py-1 cursor-pointer transition-all hover:shadow-sm`}
+              variant="outline"
+              className={`${categoryColors[cat]} text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1 cursor-pointer transition-all hover:shadow-sm`}
               aria-label={`Category: ${cat}`}
             >
               {cat}
             </Badge>
           ))}
         </div>
-        <CardTitle id={`article-title-${item.id}`} className="line-clamp-2 text-xl mb-2">{item.title}</CardTitle>
-        <CardDescription className="text-base">
+        <CardTitle id={`article-title-${item.id}`} className="line-clamp-2 text-base md:text-xl mb-1 md:mb-2">{item.title}</CardTitle>
+        <CardDescription className="text-sm md:text-base">
           <span className="sr-only">Published by </span>
           {item.source}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
-        <p className="mb-6 text-base text-muted-foreground line-clamp-2 flex-1 leading-relaxed">{item.excerpt}</p>
-        <div className="flex items-center justify-between text-base text-muted-foreground">
+      <CardContent className="flex-1 flex flex-col p-4 pt-0 md:p-6 md:pt-0">
+        <p className="mb-3 md:mb-6 text-sm md:text-base text-muted-foreground line-clamp-2 flex-1 leading-relaxed">{item.excerpt}</p>
+        <div className="flex items-center justify-between text-xs md:text-base text-muted-foreground">
           <time dateTime={item.publishDate.toISOString()}>{format(item.publishDate, 'MMM d, yyyy')}</time>
-            <Button asChild variant="ghost" size="sm" className="text-base group-hover:bg-accent transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-              <a 
-                href={item.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+            <Button asChild variant="ghost" size="sm" className="text-xs md:text-base group-hover:bg-accent transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={`Read full article: ${item.title} from ${item.source}. Opens in new tab.`}
                 onMouseEnter={(e) => {
                   const icon = e.currentTarget.querySelector('svg');

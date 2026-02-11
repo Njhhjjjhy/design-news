@@ -63,33 +63,33 @@ const mockHighlights: NewsItem[] = [
 
 export function RecentHighlights({ highlights = mockHighlights }: RecentHighlightsProps) {
   return (
-    <section className="w-full px-12 py-24">
+    <section className="w-full px-4 md:px-5 lg:px-12 py-8 md:py-16 lg:py-24 large:py-32">
       <div className="mx-auto w-full max-w-none">
-        <div className="mb-16 flex items-center justify-between">
-          <h2 className="text-5xl font-bold md:text-6xl">Recent Highlights</h2>
-          <Button asChild variant="outline" className="text-lg px-6 py-3 h-auto">
+        <div className="mb-4 md:mb-12 lg:mb-16 flex items-center justify-between gap-4">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl large:text-6xl font-bold">Recent Highlights</h2>
+          <Button asChild variant="outline" className="text-xs md:text-lg px-4 md:px-6 py-2 md:py-3 h-auto shrink-0">
             <Link href="/latest">View All</Link>
           </Button>
         </div>
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-3 md:gap-6 lg:gap-8 large:gap-10 grid-cols-1 md:grid-cols-2">
           {highlights.map((item) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mb-4 flex flex-wrap gap-3">
+              <CardHeader className="p-4 md:p-6">
+                <div className="mb-2 md:mb-4 flex flex-wrap gap-1.5 md:gap-3">
                   {item.category.map((cat) => (
-                    <Badge key={cat} className={`${categoryColors[cat]} text-base px-3 py-1`}>
+                    <Badge key={cat} className={`${categoryColors[cat]} text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1`}>
                       {cat}
                     </Badge>
                   ))}
                 </div>
-                <CardTitle className="line-clamp-2 text-2xl mb-2">{item.title}</CardTitle>
-                <CardDescription className="text-lg">{item.source}</CardDescription>
+                <CardTitle className="line-clamp-2 text-base md:text-2xl mb-1 md:mb-2">{item.title}</CardTitle>
+                <CardDescription className="text-sm md:text-lg">{item.source}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="mb-6 text-lg text-muted-foreground line-clamp-2 leading-relaxed">{item.excerpt}</p>
-                <div className="flex items-center justify-between text-base text-muted-foreground">
+              <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+                <p className="mb-3 md:mb-6 text-sm md:text-lg text-muted-foreground line-clamp-2 leading-relaxed">{item.excerpt}</p>
+                <div className="flex items-center justify-between text-xs md:text-base text-muted-foreground">
                   <span>{format(item.publishDate, 'MMM d, yyyy')}</span>
-                  <Button asChild variant="ghost" size="sm" className="text-base">
+                  <Button asChild variant="ghost" size="sm" className="text-xs md:text-base">
                     <Link href={item.url} target="_blank" rel="noopener noreferrer">
                       Read More →
                     </Link>

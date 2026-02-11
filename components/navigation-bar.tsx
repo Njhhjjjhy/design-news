@@ -3,16 +3,17 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { Search, Newspaper } from 'lucide-react';
+import { Search, Newspaper, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
 import { useSearch } from '@/hooks/useSearch';
 import { useQuery } from '@tanstack/react-query';
 import { useNotes } from '@/hooks/useNotes';
 import type { NewsItem } from '@/lib/types';
-import { motion } from 'framer-motion';
-import { setupButtonHover, animateSearchFocus, animateIcon } from '@/lib/utils/gsap-animations';
+import { setupButtonHover, animateSearchFocus } from '@/lib/utils/gsap-animations';
 import { gsap } from 'gsap';
 
 async function fetchNews(): Promise<NewsItem[]> {
@@ -21,7 +22,6 @@ async function fetchNews(): Promise<NewsItem[]> {
     throw new Error('Failed to fetch news');
   }
   const data = await response.json();
-  // Convert date strings back to Date objects
   return data.map((item: NewsItem) => ({
     ...item,
     publishDate: new Date(item.publishDate),
@@ -37,13 +37,13 @@ export function NavigationBar() {
   });
   const { notes } = useNotes();
   const { query, setQuery, results } = useSearch(news, notes);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const logoIconRef = useRef<SVGSVGElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const navButtonsRef = useRef<(HTMLAnchorElement | null)[]>([]);
 
   useEffect(() => {
-    // Animate logo icon on mount
     if (logoIconRef.current) {
       gsap.from(logoIconRef.current, {
         rotation: -180,
@@ -53,12 +53,10 @@ export function NavigationBar() {
       });
     }
 
-    // Setup search input animation
     if (searchInputRef.current) {
       animateSearchFocus(searchInputRef.current);
     }
 
-    // Setup button hover animations
     navButtonsRef.current.forEach((button) => {
       if (button) setupButtonHover(button);
     });
@@ -69,16 +67,23 @@ export function NavigationBar() {
     return pathname.startsWith(href);
   };
 
+  const navLinks = [
+    { href: '/notes', label: 'Notes', ariaLabel: 'View and manage notes' },
+    { href: '/blog', label: 'Blog', ariaLabel: 'View published blog posts' },
+    { href: '/videos', label: 'Videos', ariaLabel: 'Browse design videos' },
+  ];
+
   return (
     <>
-      <nav 
+      <nav
         className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="flex h-20 items-center justify-between px-12">
-          <Link 
-            href="/" 
+        <div className="flex h-14 md:h-16 lg:h-20 items-center justify-between px-4 md:px-5 lg:px-12">
+          {/* Logo */}
+          <Link
+            href="/"
             className="flex items-center space-x-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
             aria-label="Design News home page"
             onMouseEnter={() => {
@@ -103,62 +108,33 @@ export function NavigationBar() {
             }}
           >
             <Newspaper ref={logoIconRef} className="h-7 w-7 transition-colors group-hover:text-primary" aria-hidden="true" />
-            <span className="text-2xl font-semibold transition-colors group-hover:text-primary">Design News</span>
+            <span className="hidden md:inline text-2xl font-semibold transition-colors group-hover:text-primary">Design News</span>
           </Link>
-          <div className="flex items-center space-x-6">
-            <Button
-              variant="ghost"
-              asChild
-              className={cn(
-                'text-lg font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                isActive('/notes') && 'text-foreground'
-              )}
-            >
-              <Link 
-                ref={(el) => { navButtonsRef.current[0] = el; }}
-                href="/notes"
-                aria-label="View and manage notes"
-                aria-current={isActive('/notes') ? 'page' : undefined}
+
+          {/* Desktop nav + search (hidden below lg/1024px) */}
+          <div className="hidden lg:flex items-center space-x-6">
+            {navLinks.map((link, index) => (
+              <Button
+                key={link.href}
+                variant="ghost"
+                asChild
+                className={cn(
+                  'text-lg font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                  isActive(link.href) && 'text-foreground'
+                )}
               >
-                Notes
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              asChild
-              className={cn(
-                'text-lg font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                isActive('/blog') && 'text-foreground'
-              )}
-            >
-              <Link 
-                ref={(el) => { navButtonsRef.current[1] = el; }}
-                href="/blog"
-                aria-label="View published blog posts"
-                aria-current={isActive('/blog') ? 'page' : undefined}
-              >
-                Blog
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              asChild
-              className={cn(
-                'text-lg font-medium transition-all duration-200 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                isActive('/videos') && 'text-foreground'
-              )}
-            >
-              <Link 
-                ref={(el) => { navButtonsRef.current[2] = el; }}
-                href="/videos"
-                aria-label="Browse design videos"
-                aria-current={isActive('/videos') ? 'page' : undefined}
-              >
-                Videos
-              </Link>
-            </Button>
+                <Link
+                  ref={(el) => { navButtonsRef.current[index] = el; }}
+                  href={link.href}
+                  aria-label={link.ariaLabel}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                >
+                  {link.label}
+                </Link>
+              </Button>
+            ))}
             <div className="relative w-80">
-              <Search 
+              <Search
                 className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors"
                 aria-hidden="true"
               />
@@ -207,6 +183,73 @@ export function NavigationBar() {
               )}
             </div>
           </div>
+
+          {/* Mobile/Tablet menu button (visible below lg/1024px) */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden min-h-11 min-w-11"
+                aria-label="Open navigation menu"
+              >
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[85vw] max-w-80 p-0">
+              <VisuallyHidden><SheetTitle>Navigation menu</SheetTitle></VisuallyHidden>
+              <div className="flex flex-col h-full">
+                <div className="pt-12 px-6 pb-6 border-b">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                    <Input
+                      type="text"
+                      placeholder="Search..."
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      aria-label="Search design news articles and notes"
+                      className="h-12 w-full rounded-full bg-muted pl-12 pr-4 text-base border-0"
+                    />
+                  </div>
+                  {query.trim() && results.length > 0 && (
+                    <div className="mt-3 max-h-48 overflow-y-auto space-y-1">
+                      {results.slice(0, 5).map((result) => (
+                        <Link
+                          key={result.id}
+                          href={result.url || `/notes?note=${result.id}`}
+                          target={result.url ? '_blank' : undefined}
+                          rel={result.url ? 'noopener noreferrer' : undefined}
+                          className="block p-3 rounded-md hover:bg-muted transition-colors text-sm"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <div className="font-medium mb-1">{result.title}</div>
+                          <div className="text-xs text-muted-foreground line-clamp-1">{result.excerpt}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <nav className="flex flex-col p-6 space-y-2" aria-label="Mobile navigation">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        'flex items-center rounded-lg px-4 py-3 text-lg font-medium transition-colors min-h-11',
+                        isActive(link.href)
+                          ? 'bg-muted text-foreground'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      aria-current={isActive(link.href) ? 'page' : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </nav>
     </>
